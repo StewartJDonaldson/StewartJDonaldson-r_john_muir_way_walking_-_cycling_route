@@ -1,0 +1,286 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+
+library(plotKML)
+library(tidyverse)
+library(here)
+library(readr)
+library(data.table)
+library(leaflet)
+library(htmltools)
+
+```
+
+
+```{r}
+
+# Importing GPX file with John Muir Cycle route data from https://www.bikemap.net/en/o/3619145/#7.31/55.992/-3.626
+jm_cycle_data <- readGPX(here("/1_raw_data/john_muir_way_bikemap.net.gpx"))
+
+# Extracting relevant sections of the route from nested list
+dataset_1 <- jm_cycle_data[["tracks"]][[1]][["John Muir Way"]] %>%
+  rowid_to_column("index") %>%
+  mutate(dataset = 1)
+
+dataset_2 <- jm_cycle_data[["tracks"]][[2]][["John Muir Way"]] %>%
+  add_column(index = 3483:1934, .before = "lon") %>%
+  mutate(dataset = 2)
+
+dataset_3 <- jm_cycle_data[["tracks"]][[8]][["John Muir Way"]] %>%
+  add_column(index = 3499:3484, .before = "lon") %>%
+  mutate(dataset = 3)
+
+dataset_4 <- jm_cycle_data[["tracks"]][[10]][["John Muir Way"]] %>%
+  add_column(index = 3500:4589, .before = "lon") %>%
+  mutate(dataset = 4)
+
+dataset_5 <- jm_cycle_data[["tracks"]][[11]][["John Muir Way"]] %>%
+  add_column(index = 4590:4608, .before = "lon") %>%
+  mutate(dataset = 5)
+
+dataset_6 <- jm_cycle_data[["tracks"]][[13]][["John Muir Way"]] %>%
+  add_column(index = 4609:4638, .before = "lon") %>%
+  mutate(dataset = 6)
+
+dataset_7 <- jm_cycle_data[["tracks"]][[14]][["John Muir Way"]] %>%
+  add_column(index = 4639:4642, .before = "lon") %>%
+  mutate(dataset = 7)
+
+dataset_8 <- jm_cycle_data[["tracks"]][[16]][["John Muir Way"]] %>%
+  add_column(index = 4643:4652, .before = "lon") %>%
+  mutate(dataset = 8)
+
+dataset_9 <- jm_cycle_data[["tracks"]][[17]][["John Muir Way"]] %>%
+  add_column(index = 4653:4662, .before = "lon") %>%
+  mutate(dataset = 9)
+
+dataset_10 <- jm_cycle_data[["tracks"]][[19]][["John Muir Way"]] %>%
+  add_column(index = 4663:4927, .before = "lon") %>%
+  mutate(dataset = 10)
+
+
+# Combining subsets into a single dataframe
+jm_cycle_route_data <- rbind(dataset_1, dataset_2, dataset_3, dataset_4, dataset_5, dataset_6, dataset_7, dataset_8, dataset_9, dataset_10)
+
+jm_cycle_route_data
+
+```
+
+
+```{r}
+## Data Cleaning ##
+
+
+# Cleaning jm_cycle_route_data
+jm_cycle_route_data_tidy <- jm_cycle_route_data %>%
+  arrange(index) %>%
+  # Removing non-essential columns
+  select(-ele, -dataset) %>%
+  # Renaming headers
+  rename(longitude = lon,
+         latitude = lat) %>%
+  # Creating new column and dividing data into each of the 10 sections of the John Muir Way
+  mutate(section = case_when(
+    index >= 4610 ~ 10,
+    index <= 4609 & index >= 4138 ~ 9,
+    index <= 4137 & index >= 3539 ~ 8,
+    index <= 3538 & index >= 2645 ~ 7,
+    index <= 2644 & index >= 1941 ~ 6,
+    index <= 1940 & index >= 1640 ~ 5,
+    index <= 1639 & index >= 1055 ~ 4,
+    index <= 1054 & index >= 752 ~ 3,
+    index <= 751  & index >= 213 ~ 2,
+    index <= 212 ~ 1,
+  )) %>%
+  # Creating a new column that segments data by the specific route of the John Muir Way
+  mutate(route = case_when(
+    section == 1 ~ "Helensburgh to Balloch",
+    section == 2 ~ "Balloch to Strathblane",
+    section == 3 ~ "Strathblane to Kilsyth",
+    section == 4 ~ "Kilsyth to Falkirk",
+    section == 5 ~ "Falkirk to Linlithgow",
+    section == 6 ~ "Linlithgow to South Queensferry",
+    section == 7 ~ "South Queensferry to Edinburgh",
+    section == 8 ~ "Edinburgh to Prestonpans",
+    section == 9 ~ "Prestonpans to North Berwick",
+    section == 10 ~ "North Berwick to Dunbar"
+  )) %>%
+  # Creating a new column with hardcoded values of the distance for each route. Taken directly from https://johnmuirway.org/route/
+  mutate(distance_miles = case_when(
+    section == 1 ~ 9,
+    section == 2 ~ 18.5,
+    section == 3 ~ 13,
+    section == 4 ~ 13,
+    section == 5 ~ 8.5,
+    section == 6 ~ 14,
+    section == 7 ~ 15.5,
+    section == 8 ~ 10,
+    section == 9 ~ 16.5,
+    section == 10 ~ 15
+  )) %>%
+  mutate(distance_kilometers = case_when(
+    section == 1 ~ 14.4,
+    section == 2 ~ 29.6,
+    section == 3 ~ 20.8,
+    section == 4 ~ 20.8,
+    section == 5 ~ 13.6,
+    section == 6 ~ 22.4,
+    section == 7 ~ 24.8,
+    section == 8 ~ 16,
+    section == 9 ~ 26.4,
+    section == 10 ~ 24
+  )) %>%
+  # Creating a new column with hardcoded values of the average time to complete each route. Taken directly from https://johnmuirway.org/route/
+  mutate(avg_time_to_complete = case_when(
+    section == 1 ~ 1.5,
+    section == 2 ~ 3,
+    section == 3 ~ 2.5,
+    section == 4 ~ 2.5,
+    section == 5 ~ 2.5,
+    section == 6 ~ 3,
+    section == 7 ~ 3,
+    section == 8 ~ 2.5,
+    section == 9 ~ 3,
+    section == 10 ~ 2.5 
+  ))
+
+
+```
+
+```{r}
+
+# Seperating routes to be able to import them as layers into Google Maps
+
+helensburgh_balloch <- jm_cycle_route_data_tidy %>%
+  filter(route == "Helensburgh to Balloch")
+
+balloch_strathblan <- jm_cycle_route_data_tidy %>%
+  filter(route == "Balloch to Strathblane")
+   
+strathblane_kilsyth <- jm_cycle_route_data_tidy %>%
+  filter(route == "Strathblane to Kilsyth")
+    
+kilsyth_falkirk <- jm_cycle_route_data_tidy %>%
+  filter(route == "Kilsyth to Falkirk")
+    
+falkirk_linlithgow <- jm_cycle_route_data_tidy %>%
+  filter(route == "Falkirk to Linlithgow")
+  
+linlithgow_south_queensferry <- jm_cycle_route_data_tidy %>%
+  filter(route == "Linlithgow to South Queensferry")
+
+south_queensferry_edinburgh <- jm_cycle_route_data_tidy %>%
+  filter(route == "South Queensferry to Edinburgh")
+    
+edinburgh_prestonpans <- jm_cycle_route_data_tidy %>%
+  filter(route == "Edinburgh to Prestonpans")  
+
+prestonpans_north_berwick <- jm_cycle_route_data_tidy %>%
+  filter(route == "Prestonpans to North Berwick") 
+   
+north_berwick_dunbar <- jm_cycle_route_data_tidy %>%
+  filter(route == "North Berwick to Dunbar") 
+
+```
+
+
+```{r}
+
+# Writing data output to CSV
+
+write_csv(
+  jm_cycle_route_data_tidy,
+  here(paste0(
+    "/3_clean_data/john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+# Writing each route as a seperate CSV to be able to import it into Google Maps
+
+write_csv(
+  helensburgh_balloch,
+  here(paste0(
+    "/3_clean_data/1_helensburgh_balloch_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  balloch_strathblan,
+  here(paste0(
+    "/3_clean_data/2_balloch_strathblan_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  strathblane_kilsyth,
+  here(paste0(
+    "/3_clean_data/3_strathblane_kilsyth_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  kilsyth_falkirk,
+  here(paste0(
+    "/3_clean_data/4_kilsyth_falkirk_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  falkirk_linlithgow,
+  here(paste0(
+    "/3_clean_data/5_falkirk_linlithgow_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  linlithgow_south_queensferry,
+  here(paste0(
+    "/3_clean_data/6_linlithgow_south_queensferry_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  south_queensferry_edinburgh,
+  here(paste0(
+    "/3_clean_data/7_south_queensferry_edinburgh_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  edinburgh_prestonpans,
+  here(paste0(
+    "/3_clean_data/8_edinburgh_prestonpans_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  prestonpans_north_berwick,
+  here(paste0(
+    "/3_clean_data/9_prestonpans_north_berwick_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+write_csv(
+  north_berwick_dunbar,
+  here(paste0(
+    "/3_clean_data/10_north_berwick_dunbar_john_muir_way_cycle_route_",
+    format(Sys.time(), "%d_%m_%y"), ".csv"
+  ))
+)
+
+
+```

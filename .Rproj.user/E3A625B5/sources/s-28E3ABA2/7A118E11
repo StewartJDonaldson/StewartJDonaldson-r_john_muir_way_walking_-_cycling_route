@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1586535224700.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7A118E11",
+    "lastKnownWriteTime" : 1586532216,
+    "last_content_update" : 1586532216,
+    "path" : "~/4_personal_projects/r_john_muir_way/2_scripts/1_data_extraction_&_cleaning/john_muir_way_cycling_route_data_extraction_&_cleaning_script.Rmd",
+    "project_path" : "2_scripts/1_data_extraction_&_cleaning/john_muir_way_cycling_route_data_extraction_&_cleaning_script.Rmd",
+    "properties" : {
+        "chunk_output_type" : "inline"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

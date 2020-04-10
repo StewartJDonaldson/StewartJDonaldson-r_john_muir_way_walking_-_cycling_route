@@ -1,0 +1,13 @@
+"0","```r
+
+# Writing data output to CSV
+
+write_csv(
+  john_muir_way_walking_coords_tidy,
+  here(paste0(
+    \"/3_clean_data/john_muir_way_walking_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+```"

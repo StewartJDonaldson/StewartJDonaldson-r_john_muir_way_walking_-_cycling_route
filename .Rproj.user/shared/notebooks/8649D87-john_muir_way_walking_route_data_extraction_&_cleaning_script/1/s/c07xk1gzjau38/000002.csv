@@ -1,0 +1,80 @@
+"0","```r
+
+## Data Cleaning ##
+
+
+# Cleaning John Muir Way Walking data
+
+john_muir_way_walking_coords_tidy <- john_muir_way_walking_coords %>%
+  # Creating an index column
+  rowid_to_column(\"index\") %>%
+  # Renaming data columns
+  rename(longitude = V1,
+         latitude = V2) %>%
+  # Creating a new column that segments data by the specific section of the John Muir Way
+  mutate(section = case_when(
+    index >= 1734 ~ 10,
+    index <= 1733 & index >= 1569 ~ 9,
+    index <= 1568 & index >= 1444 ~ 8,
+    index <= 1443 & index >= 1205 ~ 7,
+    index <= 1204 & index >= 903 ~ 6,
+    index <= 902 & index >= 698 ~ 5,
+    index <= 697 & index >= 515 ~ 4,
+    index <= 514 & index >= 354 ~ 3,
+    index <= 353 & index >= 126 ~ 2,
+    index <= 125 ~ 1,
+  )) %>%
+  # Creating a new column that segments data by the specific route of the John Muir Way
+  mutate(route = case_when(
+    section == 1 ~ \"Helensburgh to Balloch\",
+    section == 2 ~ \"Balloch to Strathblane\",
+    section == 3 ~ \"Strathblane to Kilsyth\",
+    section == 4 ~ \"Kilsyth to Falkirk\",
+    section == 5 ~ \"Falkirk to Linlithgow\",
+    section == 6 ~ \"Linlithgow to South Queensferry\",
+    section == 7 ~ \"South Queensferry to Edinburgh\",
+    section == 8 ~ \"Edinburgh to Prestonpans\",
+    section == 9 ~ \"Prestonpans to North Berwick\",
+    section == 10 ~ \"North Berwick to Dunbar\"
+  )) %>%
+  # Creating a new column with hardcoded values of distance of each route. Taken directly from https://johnmuirway.org/route/
+  mutate(distance_miles = case_when(
+    section == 1 ~ 9,
+    section == 2 ~ 18.5,
+    section == 3 ~ 13,
+    section == 4 ~ 13,
+    section == 5 ~ 8.5,
+    section == 6 ~ 14,
+    section == 7 ~ 15.5,
+    section == 8 ~ 10,
+    section == 9 ~ 16.5,
+    section == 10 ~ 15
+  )) %>%
+  mutate(distance_kilometers = case_when(
+    section == 1 ~ 14.4,
+    section == 2 ~ 29.6,
+    section == 3 ~ 20.8,
+    section == 4 ~ 20.8,
+    section == 5 ~ 13.6,
+    section == 6 ~ 22.4,
+    section == 7 ~ 24.8,
+    section == 8 ~ 16,
+    section == 9 ~ 26.4,
+    section == 10 ~ 24
+  )) %>%
+  # Creating a new column with hardcoded values of the average time to complete each route. Taken directly from https://johnmuirway.org/route/
+  mutate(avg_time_to_complete = case_when(
+    section == 1 ~ 4,
+    section == 2 ~ 6,
+    section == 3 ~ 4,
+    section == 4 ~ 5,
+    section == 5 ~ 4,
+    section == 6 ~ 7,
+    section == 7 ~ 7,
+    section == 8 ~ 4,
+    section == 9 ~ 5,
+    section == 10 ~ 5 
+  ))
+  
+john_muir_way_walking_coords_tidy
+```"

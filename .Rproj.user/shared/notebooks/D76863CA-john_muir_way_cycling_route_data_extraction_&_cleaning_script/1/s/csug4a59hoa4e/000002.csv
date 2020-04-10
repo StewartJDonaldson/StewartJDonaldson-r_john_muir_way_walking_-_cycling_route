@@ -1,0 +1,96 @@
+"0","```r
+
+# Writing data output to CSV
+
+write_csv(
+  jm_cycle_route_data_tidy,
+  here(paste0(
+    \"/3_clean_data/john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+# Writing each route as a seperate CSV to be able to import it into Google Maps
+
+write_csv(
+  helensburgh_balloch,
+  here(paste0(
+    \"/3_clean_data/1_helensburgh_balloch_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  balloch_strathblan,
+  here(paste0(
+    \"/3_clean_data/2_balloch_strathblan_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  strathblane_kilsyth,
+  here(paste0(
+    \"/3_clean_data/3_strathblane_kilsyth_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  kilsyth_falkirk,
+  here(paste0(
+    \"/3_clean_data/4_kilsyth_falkirk_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  falkirk_linlithgow,
+  here(paste0(
+    \"/3_clean_data/5_falkirk_linlithgow_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  linlithgow_south_queensferry,
+  here(paste0(
+    \"/3_clean_data/6_linlithgow_south_queensferry_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  south_queensferry_edinburgh,
+  here(paste0(
+    \"/3_clean_data/7_south_queensferry_edinburgh_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  edinburgh_prestonpans,
+  here(paste0(
+    \"/3_clean_data/8_edinburgh_prestonpans_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  prestonpans_north_berwick,
+  here(paste0(
+    \"/3_clean_data/9_prestonpans_north_berwick_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+write_csv(
+  north_berwick_dunbar,
+  here(paste0(
+    \"/3_clean_data/10_north_berwick_dunbar_john_muir_way_cycle_route_\",
+    format(Sys.time(), \"%d_%m_%y\"), \".csv\"
+  ))
+)
+
+
+```"

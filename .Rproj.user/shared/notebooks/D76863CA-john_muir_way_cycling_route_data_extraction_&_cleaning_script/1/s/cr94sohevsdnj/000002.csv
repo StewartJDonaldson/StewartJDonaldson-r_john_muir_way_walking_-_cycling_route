@@ -1,0 +1,36 @@
+"0","```r
+
+# Seperating routes to be able to import into Google Maps
+
+helensburgh_balloch <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Helensburgh to Balloch\")
+
+balloch_strathblan <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Balloch to Strathblane\")
+   
+strathblane_kilsyth <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Strathblane to Kilsyth\")
+    
+kilsyth_falkirk <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Kilsyth to Falkirk\")
+    
+falkirk_linlithgow <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Falkirk to Linlithgow\")
+  
+  
+linlithgow_south_queensferry <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Linlithgow to South Queensferry\")
+
+south_queensferry_edinburgh <- jm_cycle_route_data_tidy %>%
+  filter(route == \"South Queensferry to Edinburgh\")
+    
+edinburgh_prestonpans <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Edinburgh to Prestonpans\")  
+
+prestonpans_north_berwick <- jm_cycle_route_data_tidy %>%
+  filter(route == \"Prestonpans to North Berwick\") 
+   
+north_berwick_dunbar <- jm_cycle_route_data_tidy %>%
+  filter(route == \"North Berwick to Dunbar\") 
+
+```"

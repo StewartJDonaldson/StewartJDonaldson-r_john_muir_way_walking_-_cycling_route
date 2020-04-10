@@ -1,0 +1,76 @@
+"0","```r
+
+
+jm_cycle_route_data_tidy <- jm_cycle_route_data %>%
+  arrange(index) %>%
+  select(-ele, -dataset) %>%
+  rename(longitude = lon,
+         latitude = lat) %>%
+  mutate(section = case_when(
+    index >= 4610 ~ 10,
+    index <= 4609 & index >= 4138 ~ 9,
+    index <= 4137 & index >= 3539 ~ 8,
+    index <= 3538 & index >= 2645 ~ 7,
+    index <= 2644 & index >= 1941 ~ 6,
+    index <= 1940 & index >= 1640 ~ 5,
+    index <= 1639 & index >= 1055 ~ 4,
+    index <= 1054 & index >= 752 ~ 3,
+    index <= 751  & index >= 213 ~ 2,
+    index <= 212 ~ 1,
+  )) %>%
+  # Creating a new column that segments data by the specific route of the John Muir Way
+  mutate(route = case_when(
+    section == 1 ~ \"Helensburgh to Balloch\",
+    section == 2 ~ \"Balloch to Strathblane\",
+    section == 3 ~ \"Strathblane to Kilsyth\",
+    section == 4 ~ \"Kilsyth to Falkirk\",
+    section == 5 ~ \"Falkirk to Linlithgow\",
+    section == 6 ~ \"Linlithgow to South Queensferry\",
+    section == 7 ~ \"South Queensferry to Edinburgh\",
+    section == 8 ~ \"Edinburgh to Prestonpans\",
+    section == 9 ~ \"Prestonpans to North Berwick\",
+    section == 10 ~ \"North Berwick to Dunbar\"
+  )) %>%
+  # Creating a new column with hardcoded values of distance of each route. Taken directly from https://johnmuirway.org/route/
+  mutate(distance_miles = case_when(
+    section == 1 ~ 9,
+    section == 2 ~ 18.5,
+    section == 3 ~ 13,
+    section == 4 ~ 13,
+    section == 5 ~ 8.5,
+    section == 6 ~ 14,
+    section == 7 ~ 15.5,
+    section == 8 ~ 10,
+    section == 9 ~ 16.5,
+    section == 10 ~ 15
+  )) %>%
+  mutate(distance_kilometers = case_when(
+    section == 1 ~ 14.4,
+    section == 2 ~ 29.6,
+    section == 3 ~ 20.8,
+    section == 4 ~ 20.8,
+    section == 5 ~ 13.6,
+    section == 6 ~ 22.4,
+    section == 7 ~ 24.8,
+    section == 8 ~ 16,
+    section == 9 ~ 26.4,
+    section == 10 ~ 24
+  )) %>%
+  # Creating a new column with hardcoded values of the average time to complete each route. Taken directly from https://johnmuirway.org/route/
+  mutate(avg_time_to_complete = case_when(
+    section == 1 ~ 1.5,
+    section == 2 ~ 3,
+    section == 3 ~ 2.5,
+    section == 4 ~ 2.5,
+    section == 5 ~ 2.5,
+    section == 6 ~ 3,
+    section == 7 ~ 3,
+    section == 8 ~ 2.5,
+    section == 9 ~ 3,
+    section == 10 ~ 2.5 
+  ))
+
+jm_cycle_route_data_tidy %>%
+  filter(index <= 751) %>%
+  arrange(desc(index))
+```"

@@ -1,0 +1,48 @@
+"0","```r
+jm_cycle_data <- readGPX(here(\"/1_raw_data/John Muir Way bikemap.net.gpx\"))
+
+
+dataset_1 <- jm_cycle_data[[\"tracks\"]][[1]][[\"John Muir Way\"]] %>%
+  rowid_to_column(\"index\") %>%
+  mutate(dataset = 1)
+
+dataset_2 <- jm_cycle_data[[\"tracks\"]][[2]][[\"John Muir Way\"]] %>%
+  add_column(index = 3483:1934, .before = \"lon\") %>%
+  mutate(dataset = 2)
+
+dataset_3 <- jm_cycle_data[[\"tracks\"]][[8]][[\"John Muir Way\"]] %>%
+  add_column(index = 3499:3484, .before = \"lon\") %>%
+  mutate(dataset = 3)
+
+dataset_4 <- jm_cycle_data[[\"tracks\"]][[10]][[\"John Muir Way\"]] %>%
+  add_column(index = 3500:4589, .before = \"lon\") %>%
+  mutate(dataset = 4)
+
+dataset_5 <- jm_cycle_data[[\"tracks\"]][[11]][[\"John Muir Way\"]] %>%
+  add_column(index = 4590:4608, .before = \"lon\") %>%
+  mutate(dataset = 5)
+
+dataset_6 <- jm_cycle_data[[\"tracks\"]][[13]][[\"John Muir Way\"]] %>%
+  add_column(index = 4609:4638, .before = \"lon\") %>%
+  mutate(dataset = 6)
+
+dataset_7 <- jm_cycle_data[[\"tracks\"]][[14]][[\"John Muir Way\"]] %>%
+  add_column(index = 4639:4642, .before = \"lon\") %>%
+  mutate(dataset = 7)
+
+dataset_8 <- jm_cycle_data[[\"tracks\"]][[16]][[\"John Muir Way\"]] %>%
+  add_column(index = 4643:4652, .before = \"lon\") %>%
+  mutate(dataset = 8)
+
+dataset_9 <- jm_cycle_data[[\"tracks\"]][[17]][[\"John Muir Way\"]] %>%
+  add_column(index = 4653:4662, .before = \"lon\") %>%
+  mutate(dataset = 9)
+
+dataset_10 <- jm_cycle_data[[\"tracks\"]][[19]][[\"John Muir Way\"]] %>%
+  add_column(index = 4663:4927, .before = \"lon\") %>%
+  mutate(dataset = 10)
+
+jm_cycle_route_data <- rbind(dataset_1, dataset_2, dataset_3, dataset_4, dataset_5, dataset_6, dataset_7, dataset_8, dataset_9, dataset_10)
+
+jm_cycle_route_data
+```"

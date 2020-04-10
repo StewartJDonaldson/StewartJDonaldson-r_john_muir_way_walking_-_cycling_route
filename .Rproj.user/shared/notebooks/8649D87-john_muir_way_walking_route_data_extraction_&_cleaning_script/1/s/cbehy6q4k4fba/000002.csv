@@ -1,0 +1,12 @@
+"0","```r
+## Data Extraction ##
+
+# Extracting John Muir Way GPS coordinates from dataset found on www.walkingenglishman.com
+jm_data <- readOGR(dsn = here(\"/1_raw_data/20161211044422-09169-map.kml\"), 
+                   stringsAsFactors = FALSE
+                   )
+
+# Converting jm_data list object into a dataframe
+john_muir_way_walking_coords <- as.data.frame(jm_data@lines[[1]]@Lines[[1]]@coords)
+
+```"
