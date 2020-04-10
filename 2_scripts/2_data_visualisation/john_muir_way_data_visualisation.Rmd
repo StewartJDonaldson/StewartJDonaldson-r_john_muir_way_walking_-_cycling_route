@@ -1,0 +1,29 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+
+library(tidyverse)
+library(leaflet)
+library(mapsapi)
+```
+
+```{r}
+john_muir_way_walking_coords_tidy %>%
+  filter(index >= 1778) %>%
+  leaflet() %>%
+  addTiles() %>%
+  addLabelOnlyMarkers(
+    lng = ~longitude,
+    lat = ~latitude,
+    label = ~index,
+    labelOptions = labelOptions(permanent = TRUE)
+  ) %>%
+addPolylines(
+  lng = john_muir_way_walking_coords_tidy$longitude,
+  lat = john_muir_way_walking_coords_tidy$latitude
+)
+```
